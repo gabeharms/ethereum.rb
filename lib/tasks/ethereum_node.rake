@@ -2,14 +2,25 @@ require 'open3'
 
 namespace :ethereum do
   namespace :node do
-
-    desc "Run testnet (ropsten) node"
-    task :test, [:data_dir_path, :network_id, :log_path] do |t, args|
-      cmd = "geth --datadir #{args[:data_dir_path]} --networkid #{args[:network_id]} console 2>> #{args[:log_path]}"
+    desc "Start private chain node"
+    task :start, [:genesis_file_path, :data_dir_path, :network_id] do |t, args|
+      cmd = "geth init #{args[:genesis_file_path]} --datadir #{args[:data_dir_path]}"
+      puts cmd
+      system cmd
+      
+      cmd = "geth --datadir #{args[:data_dir_path]} --networkid #{args[:network_id]}"
       puts cmd
       system cmd
     end
 
+    desc "Attach console to existing private chain"
+    task :attach, [:ipc_file_path] do |t, args|
+      cmd = "geth attach #{args[:ipc_file_path]}"
+      puts cmd
+      system cmd
+    end
+    
+    
     desc "Run production node"
     task :run do
       _, out, _ = Open3.capture3("parity account list")
