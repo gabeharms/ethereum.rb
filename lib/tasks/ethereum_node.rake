@@ -4,11 +4,8 @@ namespace :ethereum do
   namespace :node do
 
     desc "Run testnet (ropsten) node"
-    task :test do
-      args = "--chain testnet --warp"
-      out, _, _ = Open3.capture3("parity #{args} account list")
-      account = out.split(/[\[,\]]/)[1]
-      cmd = "parity #{args} --password ~/Library/Application\\ Support/io.parity.ethereum/pass --unlock #{account} --author #{account}"
+    task :test, [:data_dir_path, :network_id, :log_path] do |t, args|
+      cmd = "geth --datadir #{args[:data_dir_path]} --networkid #{args[:network_id]} console 2>> #{args[:log_path]}"
       puts cmd
       system cmd
     end
